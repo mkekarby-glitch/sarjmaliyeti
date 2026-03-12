@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>EV vs BENZİN</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#000;
+margin:0;
+font-family:Orbitron;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
+overflow:hidden;
+}
+
+.container{
+width:92%;
+max-width:420px;
+}
+
+h1{
+text-align:center;
+font-size:20px;
+margin-bottom:8px;
+}
+
+.tabs{
+display:flex;
+gap:6px;
+margin-bottom:8px;
+}
+
+.tab{
+flex:1;
+padding:8px;
+border-radius:8px;
+border:none;
+background:#222;
+color:white;
+font-family:Orbitron;
+font-size:12px;
+}
+
+.tab.active{
+background:#66d17a;
+color:black;
+}
+
+.card{
+background:#111;
+padding:8px;
+border-radius:10px;
+margin-bottom:6px;
+}
+
+.grid2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px;
+}
+
+label{
+font-size:9px;
+opacity:.6;
+}
+
+input{
+width:100%;
+padding:7px;
+border-radius:6px;
+border:none;
+background:#222;
+color:white;
+font-family:Orbitron;
+font-size:12px;
+}
+
+input::placeholder{
+opacity:.35;
+}
+
+.result{
+background:#111;
+padding:8px;
+border-radius:10px;
+margin-top:6px;
+text-align:center;
+}
+
+.big{
+font-size:20px;
+}
+
+.small{
+font-size:11px;
+opacity:.6;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>EV vs BENZİN</h1>
+
+<div class="tabs">
+<button class="tab active" onclick="setTab('normal',event)">Normal</button>
+<button class="tab" onclick="setTab('long',event)">Uzun Yol</button>
+</div>
+
+<div id="normal">
+
+<div class="card">
+
+<label>KM</label>
+<input id="km" placeholder="km" oninput="calc()" autofocus>
+
+<label>Tüketim</label>
+<input id="cons" value="236" placeholder="Wh/km" oninput="calc()">
+
+<label>Elektrik fiyat</label>
+<input id="price" value="3.45" placeholder="TL/kWh" oninput="calc()">
+
+</div>
+
+</div>
+
+<div id="long" class="hidden">
+
+<div class="card grid2">
+
+<div>
+<label>Ev km</label>
+<input id="home_km" placeholder="km" oninput="calc()">
+</div>
+
+<div>
+<label>Yol km</label>
+<input id="road_km" placeholder="km" oninput="calc()">
+</div>
+
+<div>
+<label>Ev fiyat</label>
+<input id="home_price" value="3.45" placeholder="TL/kWh" oninput="calc()">
+</div>
+
+<div>
+<label>Yol fiyat</label>
+<input id="road_price" value="9.9" placeholder="TL/kWh" oninput="calc()">
+</div>
+
+<div>
+<label>Tüketim</label>
+<input id="cons_long" value="236" placeholder="Wh/km" oninput="calc()">
+</div>
+
+<div>
+<label>Toplam km</label>
+<input id="total_km" readonly placeholder="km">
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<label>Benzin tüketim</label>
+<input id="fuel_cons" value="8.5" placeholder="L/100km" oninput="calc()">
+
+<label>Benzin fiyat</label>
+<input id="fuel_price" value="62" placeholder="TL/L" oninput="calc()">
+
+</div>
+
+<div class="result">
+
+<div class="big">⚡ <span id="ev_total">0</span> TL</div>
+<div class="small"><span id="ev_km">0</span> TL/km</div>
+
+</div>
+
+<div class="result">
+
+<div class="big">⛽ <span id="fuel_total">0</span> TL</div>
+<div class="small"><span id="fuel_km">0</span> TL/km</div>
+
+</div>
+
+<div class="result">
+
+<div class="big"><span id="save_total">0</span> TL</div>
+<div class="small"><span id="save_km">0</span> TL/km tasarruf</div>
+
+</div>
+
+</div>
+
+<script>
+
+let mode="normal"
+
+function setTab(t,e){
+
+mode=t
+
+document.getElementById("normal").classList.add("hidden")
+document.getElementById("long").classList.add("hidden")
+
+document.getElementById(t).classList.remove("hidden")
+
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"))
+e.target.classList.add("active")
+
+calc()
+
+}
+
+function calc(){
+
+let km=0
+let evCost=0
+
+if(mode=="normal"){
+
+km=parseFloat(document.getElementById("km").value||0)
+
+let cons=parseFloat(document.getElementById("cons").value||0)
+let price=parseFloat(document.getElementById("price").value||0)
+
+let kwh=(km*cons)/1000
+
+evCost=kwh*price
+
+}
+
+else{
+
+let homeKm=parseFloat(document.getElementById("home_km").value||0)
+let roadKm=parseFloat(document.getElementById("road_km").value||0)
+
+let homePrice=parseFloat(document.getElementById("home_price").value||0)
+let roadPrice=parseFloat(document.getElementById("road_price").value||0)
+
+let cons=parseFloat(document.getElementById("cons_long").value||0)
+
+let homeKwh=(homeKm*cons)/1000
+let roadKwh=(roadKm*cons)/1000
+
+let homeCost=homeKwh*homePrice
+let roadCost=roadKwh*roadPrice
+
+evCost=homeCost+roadCost
+
+km=homeKm+roadKm
+
+document.getElementById("total_km").value=km
+
+}
+
+let fuelCons=parseFloat(document.getElementById("fuel_cons").value||0)
+let fuelPrice=parseFloat(document.getElementById("fuel_price").value||0)
+
+let fuelCost=(km/100)*fuelCons*fuelPrice
+
+if(km>0){
+
+document.getElementById("ev_total").innerText=evCost.toFixed(2)
+document.getElementById("ev_km").innerText=(evCost/km).toFixed(2)
+
+document.getElementById("fuel_total").innerText=fuelCost.toFixed(2)
+document.getElementById("fuel_km").innerText=(fuelCost/km).toFixed(2)
+
+document.getElementById("save_total").innerText=(fuelCost-evCost).toFixed(2)
+document.getElementById("save_km").innerText=((fuelCost-evCost)/km).toFixed(2)
+
+}
+
+}
+
+calc()
+
+</script>
+
+</body>
+</html>
